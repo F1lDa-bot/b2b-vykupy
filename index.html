@@ -1,286 +1,530 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="cs">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.6">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Filtr Pro Reklamace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .card { background-color: white; border-radius: 0.75rem; border: 1px solid #e9ecef; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05); }
+        .keyword-pill { display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; }
+        .keyword-pill-reklamace { background-color: #ffebee; color: #c62828; }
+        .keyword-pill-servis { background-color: #f3e5f5; color: #6a1b9a; }
+        .keyword-pill button { margin-left: 0.5rem; color: inherit; opacity: 0.7; transition: opacity 0.2s; }
+        .keyword-pill button:hover { opacity: 1; }
+        .status-tag { padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .status-reklamace { background-color: #ef4444; color: white; }
+        .status-servis { background-color: #8b5cf6; color: white; }
+        .btn-disabled { cursor: not-allowed; opacity: 0.6; }
+        .table-container { max-height: 60vh; overflow: auto; }
+        th { position: sticky; top: 0; z-index: 10; background-color: #f8f9fa; }
+    </style>
 </head>
-<body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="cs"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Interaktivní přehled servisních úkonů&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Chosen Palette: Warm Neutrals (Slate, Stone, Sky) --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Application Structure Plan: Cílem je přeměnit statickou tabulku na dynamický nástroj. Struktura je navržena jako dashboard. Na levé straně (na větších obrazovkách) je ovládací panel s grafickým přehledem kategorií a filtry. Graf umožňuje rychlý pohled na objem úkonů v jednotlivých sekcích a je interaktivní – kliknutím na kategorii se vyfiltruje seznam. Hlavní část stránky zobrazuje jednotlivé servisní úkony jako karty, které lze filtrovat pomocí tlačítek kategorií a fulltextového vyhledávání (včetně nově přidaných SK kódů). Tento design byl zvolen, protože umožňuje uživatelům (např. technikům) rychle najít potřebný standardizovaný popis opravy a jeho SK kód, ať už procházením kategorií, nebo přímým vyhledáváním klíčových slov či SK, což výrazně zrychluje jejich práci. --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Visualization &amp; Content Choices: Data jsou primárně textová a kategorická. Pro vizualizaci byl zvolen horizontální sloupcový graf (Chart.js), který ukazuje počet definovaných úkonů v každé kategorii. Cíl: Porovnání. Interakce: Kliknutí na sloupec filtruje karty. Jednotlivé úkony jsou prezentovány jako karty (HTML/Tailwind), které nyní obsahují i SK kód. Cíl: Organizace a informování. Interakce: Filtrování a vyhledávání (JS), rozšířené o SK kódy. Tento přístup je optimální pro rychlou orientaci a vyhledávání v textových datech. --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Inter', sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.chart-container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-left: auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-right: auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 320px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 400px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>@media (min-width: 1024px) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.chart-container {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>height: 350px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.task-card {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.task-card:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transform: translateY(-4px);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.filter-btn.active {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #0284c7; /* sky-600 */</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body class="bg-slate-50 text-slate-800"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container mx-auto p-4 md:p-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;header class="text-center mb-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-3xl md:text-4xl font-bold text-slate-900"&gt;Přehled servisních úkonů&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="mt-2 text-lg text-slate-600"&gt;Interaktivní nástroj pro rychlé vyhledávání standardizovaných popisů oprav a SK kódů.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-1 lg:grid-cols-4 gap-8"&gt;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;aside class="lg:col-span-1 p-6 bg-white rounded-xl shadow-sm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="prose prose-slate max-w-none mb-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-xl font-semibold mb-4 text-slate-900"&gt;Navigace a přehled&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Tento panel slouží k rychlé orientaci a filtrování servisních úkonů. Můžete využít graf pro vizuální přehled kategorií, vybrat konkrétní kategorii pomocí tlačítek, nebo vyhledat úkon podle klíčového slova či SK kódu.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">                </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="chart-container mb-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;canvas id="categoryChart"&gt;&lt;/canvas&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label for="search" class="block text-sm font-medium text-slate-700 mb-2"&gt;Vyhledat úkon (popis, SK):&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="search" placeholder="Např. baterie, S0033..." class="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mt-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-md font-semibold text-slate-800 mb-3"&gt;Filtrovat podle kategorie:&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="filter-buttons" class="flex flex-wrap gap-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/aside&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;main class="lg:col-span-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                 </span>&lt;div class="prose prose-slate max-w-none mb-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-xl font-semibold text-slate-900"&gt;Seznam úkonů&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Zde naleznete detailní seznam všech servisních úkonů. Každá karta reprezentuje jeden standardizovaný úkon. Pro zobrazení pouze relevantních položek použijte filtry v navigačním panelu.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="tasks-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/main&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const serviceTasksData = [</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0033', category: 'Playstation', internal: 'LB1 - jedná se o výměnu HDD/SSD', external: 'Pro zákazníka výměna pevného disku' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0034', category: 'Playstation', internal: 'LB2 - jedná se o výměnu HDD/SSD u PS4 + výměna dvou potenciometrů u ovladačů', external: 'Pro zákazníka výměna ventilátoru, zdroje, mechaniky u PS4, nebo výměna dvou potenciometrů u jakéhokoliv playstation ovladače' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0035', category: 'Playstation', internal: 'LB3 - jedná se o výměnu více dílů u PS4 nebo výměnu jednoho dílu u PS5', external: 'Pro zákazníka výměna ventilátoru a zdroje a mechaniky zároveň u PS4, nebo výměna ventilátoru, zdroje, mechaniky u PS5' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0045', category: 'Playstation', internal: 'LB5 - jedná se o opravu ovladače', external: 'Pro zákazníka výměna jednoho potenciometru, výměna nabíjecího portu, výměna kloboučků, výměna tlačítek, výměna krytu ovladače' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0042', category: 'Xbox', internal: 'LB1 - jedná se o výměnu HDD/SSD u Xbox konzolí', external: 'Pro zákazníka výměna pevného disku' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0043', category: 'Xbox', internal: 'LB2 - jedná se o výměnu jednoho dílu u Xbox ONE/ Series S', external: 'Pro zákazníka výměna ventilátoru, zdroje, mechaniky u Xboxu ONE/ Series S' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0044', category: 'Xbox', internal: 'LB3 - jedná se o výměnu více dílů u Xbox ONE/Series S nebo jednoho dílu Xbox Series X', external: 'Pro zákazníka výměna ventilátoru a zdroje a mechaniky zároveň u Xboxu ONE/ Series S, nebo výměna ventilátoru, zdroje, mechaniky' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0037', category: 'Xbox', internal: 'LB5 - jedná se o opravu ovladačů Xbox', external: 'Pro zákazníka výměna jednoho potenciometru, výměna nabíjecího portu, výměna kloboučků, výměna tlačítek, výměna krytu ovladače' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0036', category: 'Nintendo', internal: 'LB4-jedná se o opravu konzolí nintendo', external: 'Pro zákazníka výměna baterie, větráku, čtečky herních karet, čtečky paměťových karet, kolejnic' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0038', category: 'Nintendo', internal: 'LB6-jedná se o opravu Joy-Con/ovladačů nintendo', external: 'Pro zákazníka výměna jednoho potenciometru, výměna baterie, výměna tlačítek, výměna krytu ovladače, výměna kolejnic' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S8800', category: 'Diagnostiky a čištění', internal: 'Diagnostika ovladače', external: 'Pro zákazníka Diagnostika ovladače' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S6605', category: 'Diagnostiky a čištění', internal: 'Diagnostika konzole', external: 'Pro zákazníka Diagnostika konzole' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S8804', category: 'Diagnostiky a čištění', internal: 'Update/reinstalace operačního systému konzole', external: 'Pro zákazníka Update/reinstalace operačního systému konzole' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S8777', category: 'Diagnostiky a čištění', internal: 'Čištění a přepastování konzolí PS4,PS5,Xbox One,X,S', external: 'Pro zákazníka Čištění a přepastování konzolí PS4,PS5,Xbox One,X,S' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0159', category: 'Diagnostiky a čištění', internal: 'Zpracování výkupu technikem na prodejně Konzole, Apple Watch', external: 'Pro zákazníka Zpracování výkupu technikem na prodejně Konzole, Apple Watch' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0050', category: 'Výkupy', internal: 'LB1 - jedná se o výměnu HDD/SSD, opravy Joy-Con/ovladačů nintendo', external: 'Pro zákazníka výměna pevného disku, výměna jednoho potenciometru, výměna baterie, výměna tlačítek, výměna krytu ovladače, výměna kolejnic' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0051', category: 'Výkupy', internal: 'LB2 - jedná se o opravu ovladačů Xbox,PS, oprava konzolí Nintendo 1 potenciometr (17 znaků v Able)', external: 'Pro zákazníka výměna jednoho potenciometru u všech ovladačů nebo výměna jednoho dílu u Nintendo konzole' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0052', category: 'Výkupy', internal: 'LB3 - oprava mechaniky PS/Xbox nebo čištění + přepastování (13 znaků v Able)', external: 'Pro zákazníka výměna mechaniky všechny Playstationy nebo všechny Xboxy, čištění a přepastování konzole' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0053', category: 'Výkupy', internal: 'LB4 - výměna více dílů u konzolí + výměna dvou potenciometrů u ovladačů (13 znaků v Able)', external: 'Pro zákazníka výměna ventilátoru a zdroje a mechaniky zároveň u všech konzolí nebo výměna dvou potenciometrů u všech ovladačů' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0019', category: 'iPhony/Mac', internal: 'Reinstalace iOS', external: 'Pro zákazníka Reinstalace iOS' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0003', category: 'iPhony/Mac', internal: 'Reinstalace MacOS', external: 'Pro zákazníka Reinstalace MacOS' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0001', category: 'iPhony/Mac', internal: 'Diagnostika zařízení a čištění iOS/Android', external: 'Pro zákazníka Diagnostika zařízení a čištění iOS/Android' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0102', category: 'iPhony/Mac', internal: 'Diagnostika zařízení a čištění Airpods/EarPods', external: 'Pro zákazníka Diagnostika zařízení a čištění Airpods/EarPods' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0160', category: 'iPhony/Mac', internal: 'Diagnostika a čištění DEMO a vratek', external: 'Pro zákazníka Diagnostika a čištění DEMO a vratek' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0158', category: 'iPhony/Mac', internal: 'Zpracování výkupu na prodejně technikem iPhone, Android, Mac', external: 'Pro zákazníka Zpracování výkupu na prodejně technikem iPhone, Android, Mac' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0018', category: 'iPhony/Mac', internal: 'Kontrola výkupu diagnostika a čištění následné odesílání např na jinou prodejnu', external: 'Pro zákazníka Kontrola výkupu diagnostika a čištění následné odesílání např na jinou prodejnu' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0031', category: 'iPhony/Mac', internal: 'Zamítnutí záruční reklamace', external: 'Pro zákazníka Zamítnutí záruční reklamace' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: '15642', category: 'iPhony/Mac', internal: 'Pokud díl není naskladněný a potřebuješ si zaúčtovat cenu opravy - použij tuto skladovou kartu', external: 'Pro zákazníka Pokud díl není naskladněný a potřebuješ si zaúčtovat cenu opravy - použij tuto skladovou kartu' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0021', category: 'iPhony/Mac', internal: 'Zamítnutí reklamace ze strany zákazníka', external: 'Pro zákazníka Zamítnutí reklamace ze strany zákazníka' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: '196266', category: 'iPhony/Mac', internal: 'Zprostředkování služby konzultantem', external: 'Pro zákazníka Zprostředkování služby konzultantem' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0063', category: 'iPhony/Mac', internal: 'Jakýkoliv díl na iPhone 6-11 (včetně pro modelů) pro ZKZ', external: 'Pro zákazníka výměna baterie, displeje, reproduktoru, tlačítek, nabíjecí cívky - jednotlivě u modelů iPhonů 6 až 11' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0064', category: 'iPhony/Mac', internal: 'Jakýkoliv díl na iPhone 12 a výše nebo výměna 2 dílů na jakém koliv modelu pro ZKZ', external: 'Pro zákazníka výměna baterie, displeje, reproduktoru, tlačítek, nabíjecí cívky - jednotlivě u modelů iPhonů 12 a dále, výměna displeje' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0065', category: 'iPhony/Mac', internal: 'Výměna housingu na jakýkoliv model - Platí jak u výkupu tak pro ZKZ', external: 'Pro zákazníka Výměna housingu na jakýkoliv model - Platí jak u výkupu tak pro ZKZ' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0016', category: 'iPhony/Mac', internal: 'Výměna jednoho dílu u iPhonu 6-11 (včetně pro modelů) u výkupu', external: 'Pro zákazníka výměna baterie, displeje, reproduktoru, tlačítek, nabíjecí cívky - jednotlivě u modelů iPhonů 6 až 11' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ sku: 'S0017', category: 'iPhony/Mac', internal: 'Výměna jednoho dílu u iPhonu 12 a výš nebo 2 dílů na jakém koliv modelu u výkupu', external: 'Pro zákazníka výměna baterie, displeje, reproduktoru, tlačítek, nabíjecí cívky - jednotlivě u modelů iPhonů 12 a dále, výměna displeje a baterie zároveň' },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>];</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const tasksGrid = document.getElementById('tasks-grid');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const filterButtonsContainer = document.getElementById('filter-buttons');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const searchInput = document.getElementById('search');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const categories = [...new Set(serviceTasksData.map(task =&gt; task.category))];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let activeFilter = 'Vše';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function renderCards() {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>tasksGrid.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const searchTerm = searchInput.value.toLowerCase();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>serviceTasksData</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>.filter(task =&gt; (activeFilter === 'Vše' || task.category === activeFilter) &amp;&amp;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                                   </span>(task.internal.toLowerCase().includes(searchTerm) ||<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>task.external.toLowerCase().includes(searchTerm) ||</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>task.sku.toLowerCase().includes(searchTerm)))</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>.forEach(task =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>const card = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>card.className = 'task-card bg-white p-5 rounded-lg shadow-md border border-slate-200 flex flex-col';</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>card.dataset.category = task.category;</p>
-<p class="p2"><span class="Apple-converted-space">                        </span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>card.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex justify-between items-center mb-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="inline-block bg-sky-100 text-sky-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"&gt;${task.category}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-1 rounded"&gt;SK: ${task.sku}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-slate-800 text-sm mb-1"&gt;Interní popis:&lt;/h4&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-sm text-slate-600 mb-3"&gt;${task.internal}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="mt-auto pt-3 border-t border-slate-200"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h4 class="font-semibold text-slate-800 text-sm mb-1"&gt;Text pro zákazníka:&lt;/h4&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p class="text-sm text-slate-900 font-medium"&gt;${task.external}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>tasksGrid.appendChild(card);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function setupFilters() {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const buttons = ['Vše', ...categories];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>filterButtonsContainer.innerHTML = buttons.map(category =&gt;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>`&lt;button class="filter-btn px-3 py-1.5 text-sm rounded-md transition-colors duration-200 ${category === 'Vše' ? 'active' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'}" data-category="${category}"&gt;${category}&lt;/button&gt;`</p>
-<p class="p1"><span class="Apple-converted-space">                </span>).join('');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>filterButtonsContainer.addEventListener('click', (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (e.target.tagName === 'BUTTON') {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>activeFilter = e.target.dataset.category;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>document.querySelectorAll('.filter-btn').forEach(btn =&gt; btn.classList.remove('active', 'bg-sky-600', 'text-white'));</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>document.querySelectorAll('.filter-btn').forEach(btn =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>if(btn.dataset.category !== activeFilter) {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>btn.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700')</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>e.target.classList.add('active');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>e.target.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-700');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>renderCards();</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function setupChart() {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const ctx = document.getElementById('categoryChart').getContext('2d');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const categoryCounts = categories.map(cat =&gt; serviceTasksData.filter(task =&gt; task.category === cat).length);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>const chart = new Chart(ctx, {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>type: 'bar',</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>data: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>labels: categories,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>datasets: [{</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>label: 'Počet úkonů',</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>data: categoryCounts,</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>backgroundColor: [</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(56, 189, 248, 0.6)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(16, 185, 129, 0.6)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(239, 68, 68, 0.6)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(245, 158, 11, 0.6)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(139, 92, 246, 0.6)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(99, 102, 241, 0.6)'</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>],</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>borderColor: [</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(14, 165, 233, 1)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(5, 150, 105, 1)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(220, 38, 38, 1)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(217, 119, 6, 1)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(124, 58, 237, 1)',</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>'rgba(79, 70, 229, 1)'</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>],</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>borderWidth: 1</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}]</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>options: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>indexAxis: 'y',</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>responsive: true,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>maintainAspectRatio: false,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>plugins: {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>legend: {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>display: false</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>tooltip: {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>callbacks: {</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>label: function(context) {</p>
-<p class="p1"><span class="Apple-converted-space">                                        </span>return ` Počet úkonů: ${context.raw}`;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>scales: {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>x: {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>beginAtZero: true,</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>title: {</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>display: true,</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>text: 'Počet definovaných úkonů'</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>onClick: (e, elements) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>if (elements.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>const clickedIndex = elements[0].index;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>const category = categories[clickedIndex];</p>
-<p class="p2"><span class="Apple-converted-space">                                </span></p>
-<p class="p1"><span class="Apple-converted-space">                                </span>const button = document.querySelector(`.filter-btn[data-category="${category}"]`);</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>if(button) {</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>button.click();</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>searchInput.addEventListener('input', renderCards);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>renderCards();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setupFilters();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setupChart();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600">Excel Filtr Pro Reklamace</h1>
+            <p class="mt-2 text-lg text-gray-500">Automatické filtrování Excel souborů na základě klíčových slov</p>
+        </header>
+
+        <div class="card p-4 mb-6">
+              <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-2">1. Nahrajte soubor Excel (.xlsx, .xls)</label>
+              <input type="file" id="file-upload" accept=".xlsx, .xls" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+        </div>
+
+        <div id="main-content" class="hidden">
+            <div class="card p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-700 flex items-center mb-4">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 16v-2m8-8h2M4 12H2m15.364 6.364l1.414 1.414M4.222 4.222l1.414 1.414M19.778 4.222l-1.414 1.414M4.222 19.778l1.414-1.414M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                    Nastavení filtrování
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="column-select" class="block text-sm font-medium text-gray-700">Sloupec pro filtrování</label>
+                        <select id="column-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"></select>
+                    </div>
+                    <div>
+                        <label for="preset-name" class="block text-sm font-medium text-gray-700">Uložit/načíst preset</label>
+                        <div class="flex mt-1">
+                            <input type="text" id="preset-name" class="flex-grow block w-full shadow-sm sm:text-sm border-gray-300 rounded-l-md" placeholder="Název presetu...">
+                            <button id="save-preset" class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-sm font-medium text-gray-700 hover:bg-gray-100">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold text-red-600 flex items-center mb-4">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        KLÍČ-1 (REKLAMACE)
+                    </h3>
+                    <div class="flex mb-3">
+                        <input type="text" id="keyword-input-reklamace" class="flex-grow block w-full shadow-sm sm:text-sm border-gray-300 rounded-l-md" placeholder="Klíčové slovo pro reklamace...">
+                        <button id="add-keyword-reklamace" class="px-4 py-2 bg-red-500 text-white font-semibold rounded-r-md hover:bg-red-600">Přidat</button>
+                    </div>
+                    <div id="keyword-pills-reklamace" class="flex flex-wrap gap-2 mb-4 min-h-[36px]"></div>
+                    <button id="mark-reklamace" class="w-full bg-red-500 text-white font-bold py-2.5 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        REKLAMACE
+                    </button>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold text-purple-600 flex items-center mb-4">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        KLÍČ-2 (SERVIS)
+                    </h3>
+                    <div class="flex mb-3">
+                        <input type="text" id="keyword-input-servis" class="flex-grow block w-full shadow-sm sm:text-sm border-gray-300 rounded-l-md" placeholder="Klíčové slovo pro servis...">
+                        <button id="add-keyword-servis" class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-r-md hover:bg-purple-600">Přidat</button>
+                    </div>
+                    <div id="keyword-pills-servis" class="flex flex-wrap gap-2 mb-4 min-h-[36px]"></div>
+                    <button id="mark-servis" class="w-full bg-purple-500 text-white font-bold py-2.5 px-4 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        SERVIS
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center text-sm font-medium text-gray-600 truncate">
+                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span id="file-name" class="truncate"></span>
+                    <span id="stats-bar" class="ml-4 font-normal text-gray-500"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="reset-data" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-semibold text-sm flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 9a9 9 0 0114.65-4.65l-1.33 1.33A7 7 0 105.33 17.33l-1.33 1.33A9 9 0 014 9z"></path></svg>
+                        Reset
+                    </button>
+                    <button id="export-excel" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="card p-6 mb-6 bg-yellow-50 border-yellow-200">
+                 <h3 class="text-lg font-semibold text-yellow-800 flex items-center mb-4">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Správa řádků
+                </h3>
+                <div class="flex gap-4">
+                    <button id="delete-unmarked" class="flex-1 bg-yellow-400 text-yellow-900 font-bold py-2.5 px-4 rounded-lg hover:bg-yellow-500 transition-colors">Odstranit neoznačené</button>
+                    <button id="delete-servis" class="flex-1 bg-yellow-400 text-yellow-900 font-bold py-2.5 px-4 rounded-lg hover:bg-yellow-500 transition-colors">Odstranit "SERVIS"</button>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Data Preview</h3>
+                <div id="table-container" class="table-container rounded-lg border border-gray-200">
+                    <div id="placeholder" class="text-center p-10 text-gray-500">
+                        <p>Náhled dat se zobrazí zde.</p>
+                    </div>
+                    <table id="data-table" class="w-full text-sm text-left text-gray-500 hidden">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100"></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                 <div id="status-message" class="mt-2 text-sm font-medium text-right"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIGURATION ---
+        const CATEGORIES = {
+            reklamace: {
+                keywordInputId: 'keyword-input-reklamace',
+                addBtnId: 'add-keyword-reklamace',
+                pillsContainerId: 'keyword-pills-reklamace',
+                markBtnId: 'mark-reklamace',
+                pillClass: 'keyword-pill-reklamace',
+                statusTagClass: 'status-reklamace',
+                style: { fill: { patternType: "solid", fgColor: { rgb: "FFFFDDE1" } } } // Světle červená
+            },
+            servis: {
+                keywordInputId: 'keyword-input-servis',
+                addBtnId: 'add-keyword-servis',
+                pillsContainerId: 'keyword-pills-servis',
+                markBtnId: 'mark-servis',
+                pillClass: 'keyword-pill-servis',
+                statusTagClass: 'status-servis',
+                style: { fill: { patternType: "solid", fgColor: { rgb: "FFE6CCFF" } } } // Světle fialová
+            }
+        };
+
+        // --- GLOBAL STATE ---
+        const state = {
+            originalData: [],
+            workingData: [],
+            header: [],
+            keywords: {
+                reklamace: [],
+                servis: []
+            },
+            selectedColumnIndex: 0,
+            userId: null,
+            db: null
+        };
+
+        // --- DOM ELEMENTS ---
+        const fileUpload = document.getElementById('file-upload');
+        const mainContent = document.getElementById('main-content');
+        const columnSelect = document.getElementById('column-select');
+        const presetNameInput = document.getElementById('preset-name');
+        const savePresetBtn = document.getElementById('save-preset');
+        const fileNameEl = document.getElementById('file-name');
+        const statsBarEl = document.getElementById('stats-bar');
+        const resetBtn = document.getElementById('reset-data');
+        const exportBtn = document.getElementById('export-excel');
+        const deleteUnmarkedBtn = document.getElementById('delete-unmarked');
+        const deleteServisBtn = document.getElementById('delete-servis');
+        const dataTable = document.getElementById('data-table');
+        const placeholder = document.getElementById('placeholder');
+        const statusMessage = document.getElementById('status-message');
+
+
+        // --- FIREBASE SETUP ---
+        async function setupFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                state.db = getFirestore(app);
+                const auth = getAuth(app);
+                // setLogLevel('debug'); // Povolit jen pro ladění
+
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        state.userId = user.uid;
+                        console.log("User signed in:", state.userId);
+                    }
+                });
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                updateStatus("Chyba při inicializaci databáze.", "error");
+            }
+        }
+
+        // --- PRESET MANAGEMENT ---
+        async function savePreset() {
+            if (!state.userId || !state.db) return updateStatus("Databáze není připojena.", "error");
+            const name = presetNameInput.value.trim();
+            if (!name) return updateStatus("Zadejte název presetu.", "error");
+            
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const presetDocRef = doc(state.db, `artifacts/${appId}/users/${state.userId}/excel_filter_presets/${name}`);
+            
+            const presetData = {
+                keywords: state.keywords,
+                selectedColumn: state.header[state.selectedColumnIndex]
+            };
+            
+            try {
+                await setDoc(presetDocRef, presetData);
+                updateStatus(`Preset "${name}" byl uložen.`, "success");
+            } catch (error) {
+                console.error("Error saving preset:", error);
+                updateStatus("Nepodařilo se uložit preset.", "error");
+            }
+        }
+
+        async function loadPreset(name) {
+            if (!state.userId || !state.db || !name) return;
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const presetDocRef = doc(state.db, `artifacts/${appId}/users/${state.userId}/excel_filter_presets/${name}`);
+            
+            try {
+                const docSnap = await getDoc(presetDocRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    state.keywords.reklamace = data.keywords.reklamace || [];
+                    state.keywords.servis = data.keywords.servis || [];
+                    
+                    const columnIndex = state.header.indexOf(data.selectedColumn);
+                    state.selectedColumnIndex = (columnIndex > -1) ? columnIndex : 0;
+                    columnSelect.value = state.selectedColumnIndex;
+                    
+                    renderAllKeywordPills();
+                    updateStatus(`Preset "${name}" byl načten.`, "success");
+                } else {
+                    updateStatus(`Preset "${name}" neexistuje.`, "error");
+                }
+            } catch (error) {
+                console.error("Error loading preset:", error);
+                updateStatus("Nepodařilo se načíst preset.", "error");
+            }
+        }
+
+        // --- KEYWORD MANAGEMENT (Refactored) ---
+        function addKeyword(type) {
+            const config = CATEGORIES[type];
+            const input = document.getElementById(config.keywordInputId);
+            const keyword = input.value.trim();
+            if (!keyword) return;
+
+            if (!state.keywords[type].includes(keyword)) {
+                state.keywords[type].push(keyword);
+                renderKeywordPills(type);
+            }
+            input.value = '';
+            input.focus();
+        }
+
+        function removeKeyword(type, index) {
+            state.keywords[type].splice(index, 1);
+            renderKeywordPills(type);
+        }
+
+        function renderKeywordPills(type) {
+            const config = CATEGORIES[type];
+            const container = document.getElementById(config.pillsContainerId);
+            container.innerHTML = '';
+            state.keywords[type].forEach((keyword, index) => {
+                const pill = document.createElement('span');
+                pill.className = `keyword-pill ${config.pillClass}`;
+                pill.innerHTML = `
+                    ${keyword}
+                    <button data-index="${index}" data-type="${type}" aria-label="Remove keyword">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                `;
+                container.appendChild(pill);
+            });
+        }
+
+        function renderAllKeywordPills() {
+            Object.keys(CATEGORIES).forEach(renderKeywordPills);
+        }
+
+        // --- UI & TABLE RENDERING ---
+        function updateStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = 'mt-2 text-sm font-medium text-right ';
+            const colors = { success: 'text-green-600', error: 'text-red-600', info: 'text-blue-600' };
+            statusMessage.classList.add(colors[type] || colors.info);
+        }
+
+        function updateStats() {
+            const total = state.originalData.length;
+            const reklamaceCount = state.workingData.filter(r => r.status === 'reklamace').length;
+            const servisCount = state.workingData.filter(r => r.status === 'servis').length;
+            const markedCount = reklamaceCount + servisCount;
+            statsBarEl.textContent = `Celkem: ${total} | Reklamace: ${reklamaceCount} | Servis: ${servisCount} | Označeno: ${markedCount}`;
+        }
+
+        function renderTable() {
+            if (state.workingData.length === 0) {
+                dataTable.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                placeholder.textContent = "Žádná data k zobrazení.";
+                updateStats();
+                return;
+            }
+
+            placeholder.classList.add('hidden');
+            dataTable.classList.remove('hidden');
+
+            const thead = dataTable.querySelector('thead');
+            const tbody = dataTable.querySelector('tbody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            const headerRow = document.createElement('tr');
+            ['Status', ...state.header].forEach(text => {
+                const th = document.createElement('th');
+                th.className = 'px-4 py-3 text-left';
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+
+            state.workingData.forEach(rowData => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-gray-200 hover:bg-gray-50';
+
+                const statusCell = document.createElement('td');
+                statusCell.className = 'px-4 py-2';
+                if (rowData.status) {
+                    const tag = document.createElement('span');
+                    tag.className = `status-tag ${CATEGORIES[rowData.status].statusTagClass}`;
+                    tag.textContent = rowData.status;
+                    statusCell.appendChild(tag);
+                }
+                tr.appendChild(statusCell);
+
+                rowData.values.forEach(cellData => {
+                    const td = document.createElement('td');
+                    td.className = 'px-4 py-2';
+                    td.textContent = cellData;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            updateStats();
+            updateStatus(`Zobrazeno ${state.workingData.length} řádků.`, 'info');
+        }
+
+        // --- FILE PROCESSING ---
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            fileNameEl.textContent = file.name;
+            updateStatus("Zpracovávám soubor...", "info");
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const aoa = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+                    if (aoa.length < 2) throw new Error("Soubor neobsahuje data nebo hlavičku.");
+                    
+                    state.header = aoa[0];
+                    state.originalData = aoa.slice(1).map(row => ({ values: row, status: null }));
+                    
+                    columnSelect.innerHTML = state.header.map((h, i) => `<option value="${i}">${h}</option>`).join('');
+                    
+                    resetWorkingData();
+                    mainContent.classList.remove('hidden');
+                } catch (err) {
+                    console.error(err);
+                    updateStatus(`Chyba: ${err.message}`, "error");
+                    mainContent.classList.add('hidden');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function resetWorkingData() {
+            state.workingData = JSON.parse(JSON.stringify(state.originalData));
+            renderTable();
+            updateStatus("Data byla resetována do původního stavu.", "info");
+        }
+
+        // --- CORE LOGIC (Refactored) ---
+        function markRows(type) {
+            const keywords = state.keywords[type].map(k => k.toLowerCase());
+            if (keywords.length === 0) return updateStatus(`Zadejte klíčová slova pro "${type}".`, "error");
+
+            let count = 0;
+            state.workingData.forEach(row => {
+                const cellValue = String(row.values[state.selectedColumnIndex] || '').toLowerCase();
+                if (cellValue && keywords.some(k => cellValue.includes(k))) {
+                    if (!row.status) { // Označit pouze pokud ještě není označeno
+                        row.status = type;
+                        count++;
+                    }
+                }
+            });
+            renderTable();
+            updateStatus(`Označeno ${count} nových řádků jako "${type}".`, "success");
+        }
+
+        function deleteRows(type) {
+            const confirmationMessage = type === 'unmarked' 
+                ? "Opravdu chcete odstranit všechny neoznačené řádky?"
+                : "Opravdu chcete odstranit všechny řádky označené jako 'SERVIS'?";
+            
+            if (!confirm(confirmationMessage)) return;
+
+            const initialCount = state.workingData.length;
+            if (type === 'unmarked') {
+                state.workingData = state.workingData.filter(row => row.status !== null);
+            } else if (type === 'servis') {
+                state.workingData = state.workingData.filter(row => row.status !== 'servis');
+            }
+            const removedCount = initialCount - state.workingData.length;
+            renderTable();
+            updateStatus(`Odstraněno ${removedCount} řádků.`, "success");
+        }
+
+        function exportToExcel() {
+            if (state.workingData.length === 0) return updateStatus("Není co exportovat.", "error");
+            
+            const dataToExport = [state.header, ...state.workingData.map(row => row.values)];
+            const newWorksheet = XLSX.utils.aoa_to_sheet(dataToExport);
+
+            state.workingData.forEach((row, rowIndex) => {
+                if (row.status) {
+                    const style = CATEGORIES[row.status].style;
+                    for (let colIndex = 0; colIndex < state.header.length; colIndex++) {
+                        const cellAddress = XLSX.utils.encode_cell({ r: rowIndex + 1, c: colIndex });
+                        if (!newWorksheet[cellAddress]) newWorksheet[cellAddress] = {v: ''};
+                        newWorksheet[cellAddress].s = style;
+                    }
+                }
+            });
+            
+            const colWidths = state.header.map((_, i) => ({ wch: dataToExport.reduce((w, r) => Math.max(w, String(r[i] || '').length), 10) }));
+            newWorksheet['!cols'] = colWidths;
+
+            const newWorkbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, "Filtrovaná data");
+            XLSX.writeFile(newWorkbook, "vyfiltrovana_data.xlsx");
+            updateStatus("Soubor byl úspěšně exportován.", "success");
+        }
+
+        // --- EVENT LISTENERS ---
+        function setupEventListeners() {
+            fileUpload.addEventListener('change', handleFileUpload);
+            columnSelect.addEventListener('change', (e) => state.selectedColumnIndex = parseInt(e.target.value, 10));
+            
+            savePresetBtn.addEventListener('click', savePreset);
+            presetNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') loadPreset(presetNameInput.value.trim());
+            });
+
+            Object.keys(CATEGORIES).forEach(type => {
+                const config = CATEGORIES[type];
+                document.getElementById(config.addBtnId).addEventListener('click', () => addKeyword(type));
+                document.getElementById(config.keywordInputId).addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') addKeyword(type);
+                });
+                document.getElementById(config.markBtnId).addEventListener('click', () => markRows(type));
+            });
+            
+            document.body.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('button[data-type][data-index]');
+                if (removeBtn) {
+                    const { type, index } = removeBtn.dataset;
+                    removeKeyword(type, parseInt(index, 10));
+                }
+            });
+
+            resetBtn.addEventListener('click', resetWorkingData);
+            exportBtn.addEventListener('click', exportToExcel);
+            
+            deleteUnmarkedBtn.addEventListener('click', () => deleteRows('unmarked'));
+            deleteServisBtn.addEventListener('click', () => deleteRows('servis'));
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupFirebase();
+            setupEventListeners();
+        });
+    </script>
 </body>
 </html>
